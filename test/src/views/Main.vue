@@ -13,9 +13,9 @@
               <span>导航一</span> 
             </template>
             <el-menu-item-group>
-              <template slot="title">分组一</template>
-              <el-menu-item index="/datalist">DataList</el-menu-item>
-              <el-menu-item index="1-2">选项2</el-menu-item>
+              <template slot="title">测试用</template>
+              <el-menu-item index="/data/list">DataList</el-menu-item>
+              <el-menu-item index="/data/edit">DataEdit</el-menu-item>
             </el-menu-item-group>
             <el-menu-item-group title="分组2">
               <el-menu-item index="1-3">选项3</el-menu-item>
@@ -61,24 +61,12 @@
   .el-aside {
     color: #333;
   }
-
-  .el-menu-vertical-demo:not(.el-menu--collapse) {
-    min-width: 20px;
-    min-height: 400px;
-  }
 </style>
 
 <script>
   export default {
     data() {
-      const item = {
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      };
       return {
-        tableData: Array(20).fill(item),
-        isCollapse: true,
         defaultOpends: []
       }
     },

@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 
 import Main from '../views/Main.vue'
 import DataList from '../views/DataList.vue'
+import DataEdit from '../views/DataEdit.vue'
 
 Vue.use(VueRouter)
 
@@ -12,7 +13,9 @@ const routes = [
     name: 'main',
     component: Main,
     children: [
-      { path: '/datalist', component: DataList },
+      { path: '/data/list', component: DataList },
+      { path: '/data/edit/:id', component: DataEdit, props: true },
+      { path: '/data/edit', component: DataEdit, props: true },
     ]
   },
 ]
