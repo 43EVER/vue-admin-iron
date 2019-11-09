@@ -1,13 +1,14 @@
 <template>
   <div id="app">
-    <router-link to="/">1</router-link>
-    <br>
     <router-view></router-view>
   </div>
 </template>
 
 <script>
 export default {
+  name: 'app',
+  components: {
 
+  }
 }
 </script>
