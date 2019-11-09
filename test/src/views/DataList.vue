@@ -15,6 +15,10 @@
         </el-tag>
         <el-input class="input-new-tag" v-if="inputVisible" v-model="inputValue" ref="saveTagInput" size="small"
             @keyup.enter.native="handleInputConfirm" @blur="handleInputConfirm">
+            <el-select v-model="tmpTagType" slot="prepend" placeholder="请选择">
+                <el-option label="name" value="name"></el-option>
+                <el-option label="address" value="address"></el-option>
+            </el-select>
         </el-input>
         <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>
         <el-table 
@@ -72,10 +76,11 @@ export default {
             loading: false,
             search: {
                 tags: [{ type: 'name', value: '刘洋' }],
-                dateRange: [new Date(), new Date]
+                dateRange: [new Date(), new Date],
+                tmpTagType: 'name',
+                tmpTagValue: ''
             },
             inputVisible: false,
-            inputValue: ''
         };
     },
     methods: {
@@ -89,9 +94,11 @@ export default {
             });
         },
         handleInputConfirm() {
-            let inputValue = this.inputValue;
-            if (inputValue) {
-                this.search.tags.push(inputValue);
+            let tmp = {};
+            tmp.type = this.search.tmpTagType;
+            tmp.value = this.search.tmpTagValue;
+            if (tmp.value) {
+                this.search.tags.push(tmp);
             }
             this.inputVisible = false;
             this.inputValue = '';
