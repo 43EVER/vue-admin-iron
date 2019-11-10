@@ -3,7 +3,7 @@
         data
         <el-row type="flex" justify="space-around" :gutter="20">
             <el-col :span="10">
-                <el-input v-model="search.tmpTagValue" size="large">
+                <el-input v-model="search.tags[search.tmpTagType]" size="large">
                     <el-select v-model="search.tmpTagType" slot="prepend" placeholder="请选择">
                         <el-option label="名字" value="name"></el-option>
                         <el-option label="地址" value="address"></el-option>
@@ -17,9 +17,15 @@
                 </el-date-picker>
             </el-col>
         </el-row>
+        <el-row>
+            查询什么呢？
+            <el-tag v-for="tag in allTags" :key="tag.type">
+                {{`${tag.type}: ${tag.value}`}}
+            </el-tag>
+        </el-row>
         <el-table 
             v-loading="loading"
-            :data="items"
+            :data="searchResult"
             style="width: 100%">
             <el-table-column label="Date" prop="date">
             </el-table-column>
@@ -38,6 +44,8 @@
 </template>
 
 <script>
+import moment from 'moment';
+
 export default {
     data() {
         return {
@@ -79,7 +87,9 @@ export default {
             items: [],
             loading: false,
             search: {
-                tags: [{ type: 'name', value: '刘洋' }],
+                tags: {
+                    name: 'liuyang'
+                },
                 dateRange: [new Date(), new Date],
                 tmpTagType: 'name',
                 tmpTagValue: ''
@@ -116,7 +126,7 @@ export default {
             });
             this.items = new Array(5).fill({
                 name: '刘洋',
-                date: '1999-01-04',
+                date: moment(new Date()).format('YY-MM-DD'),
                 address: '内蒙古科技大学',
                 id: 'test'
             });
@@ -145,6 +155,39 @@ export default {
     },
     created() {
         this.fetch();
+    },
+    computed: {
+        allTags() {
+            let list = [];
+            for (let tag in this.search.tags) {
+                if (!this.search.tags[tag]) continue;
+                list.push({
+                    type: tag,
+                    value: this.search.tags[tag]
+                });
+            }
+            return list;
+        },
+        searchResult() {
+            let list = [];
+            for (let item of this.items) {
+                let ok = true;
+                let start = moment(this.search.dateRange[0]);
+                let end = moment(this.search.dateRange[1]);
+                for (let tag in this.search.tags) {
+                    let now = moment(item.date, 'YY-MM-DD');                    
+                    if (!item[tag].match(this.search.tags[tag]) ||
+                            now.isBefore(start) || now.isAfter(end)) {
+                        ok = false;
+                        console.log(this.search.tags[tag].match(item[tag]));
+                        console.log(item[tag]);
+                        break;
+                    }
+                }
+                if (ok) list.push(item);
+            }
+            return list;
+        }
     }
 }
 </script>

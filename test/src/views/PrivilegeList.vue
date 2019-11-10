@@ -17,7 +17,7 @@
                 </el-date-picker>
             </el-col>
         </el-row>
-        <el-table 
+        <el-table
             v-loading="loading"
             :data="items"
             style="width: 100%">
