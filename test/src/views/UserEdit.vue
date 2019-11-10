@@ -1,6 +1,6 @@
 <template>
     <div>
-        data
+        user
         <h1>{{id ? "编辑" : "新建"}}物品</h1>
         id: {{id}}
         <el-form label-width="120px" @submit.native.prevent="save"

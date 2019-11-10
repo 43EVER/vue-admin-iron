@@ -17,10 +17,11 @@
               <el-menu-item index="/data/list">DataList</el-menu-item>
               <el-menu-item index="/data/edit">DataEdit</el-menu-item>
             </el-menu-item-group>
-            <el-menu-item-group title="分组2">
-              <el-menu-item index="1-3">选项3</el-menu-item>
-              <el-menu-item index="1-4">选项3</el-menu-item>
-              <el-menu-item index="1-5">选项3</el-menu-item>
+            <el-menu-item-group title="用户管理">
+              <el-menu-item index="/privilege/edit">添加权限</el-menu-item>
+              <el-menu-item index="/privilege/list">权限列表</el-menu-item>
+              <el-menu-item index="/user/edit">添加用户</el-menu-item>
+              <el-menu-item index="/user/list">用户列表</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
         </el-menu>
