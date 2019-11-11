@@ -11,7 +11,7 @@
                     <el-button slot="append" icon="el-icon-plus"></el-button>
                 </el-input>
             </el-col>
-            <el-col :span="20">
+            <el-col :span="12">
                 <el-date-picker v-model="search.dateRange" type="daterange" align="right" unlink-panels range-separator="至"
                     start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions">
                 </el-date-picker>
@@ -90,7 +90,7 @@ export default {
                 tags: {
                     name: 'liuyang'
                 },
-                dateRange: [new Date(), new Date],
+                dateRange: [new Date(0), new Date],
                 tmpTagType: 'name',
                 tmpTagValue: ''
             },
