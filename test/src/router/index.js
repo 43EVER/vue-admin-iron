@@ -2,8 +2,11 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 
 import Main from '../views/Main.vue'
+
 import DataList from '../views/DataList.vue'
 import DataEdit from '../views/DataEdit.vue'
+import SparePartsList from '../views/SparePartsList.vue'
+import SparePartsEdit from '../views/SparePartsEdit.vue'
 
 import PrivilegeList from '../views/PrivilegeList.vue'
 import PrivilegeEdit from '../views/PrivilegeEdit.vue'
@@ -25,6 +28,10 @@ const routes = [
       { path: '/privilege/list', component: PrivilegeList },
       { path: '/privilege/edit/:id', component: PrivilegeEdit, props: true },
       { path: '/privilege/edit', component: PrivilegeEdit },
+
+      { path: '/spareparts/list', component: SparePartsList },
+      { path: '/spareparts/edit/:id', component: SparePartsEdit, props: true },
+      { path: '/spareparts/edit', component: SparePartsEdit },
 
       { path: '/user/list', component: UserList },
       { path: '/user/edit/:id', component: UserEdit, props: true },

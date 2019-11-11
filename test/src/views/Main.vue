@@ -4,19 +4,29 @@
       <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
         <el-menu router class="el-menu-vertical-demo"
           :default-active="$route.path"
-          unique-opened
           :default-openeds="defaultOpends"
           @open="handleOpen" @close="handleClose">
           <el-submenu index="1">
             <template slot="title">
               <i class="el-icon-location"></i>
-              <span>导航一</span> 
+              <span>数据管理</span> 
             </template>
             <el-menu-item-group>
               <template slot="title">测试用</template>
               <el-menu-item index="/data/list">DataList</el-menu-item>
               <el-menu-item index="/data/edit">DataEdit</el-menu-item>
             </el-menu-item-group>
+            <el-menu-item-group>
+              <template slot="title">备料库存管理</template>
+              <el-menu-item index="/spareparts/list">备料库存列表</el-menu-item>
+              <el-menu-item index="/spareparts/edit">修改备料库存</el-menu-item>
+            </el-menu-item-group>
+          </el-submenu>
+          <el-submenu index="2">
+              <template slot="title">
+                <i class="el-icon-location"></i>
+                <span>安全管理</span> 
+              </template>
             <el-menu-item-group title="用户管理">
               <el-menu-item index="/privilege/edit">添加权限</el-menu-item>
               <el-menu-item index="/privilege/list">权限列表</el-menu-item>
@@ -78,7 +88,7 @@
       },
       handleClose(key, keyPath) {
         console.log('close', key, keyPath);
-        this.defaultOpends = this.defaultOpends.filter(k => (k === key));
+        this.defaultOpends = this.defaultOpends.filter(k => (k !== key));
       }
     }
   };

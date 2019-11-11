@@ -1,17 +1,15 @@
 <template>
     <div>
-        data
         <el-row type="flex" justify="space-around" :gutter="20">
             <el-col :span="10">
                 <el-input v-model="search.tags[search.tmpTagType]" size="large">
                     <el-select v-model="search.tmpTagType" slot="prepend" placeholder="请选择">
-                        <el-option label="名字" value="name"></el-option>
-                        <el-option label="地址" value="address"></el-option>
+                        <el-option v-for="(value, key) in itemProps" :key="key" :label="value" :value="key"></el-option>
                     </el-select>
                     <el-button slot="append" icon="el-icon-plus"></el-button>
                 </el-input>
             </el-col>
-            <el-col :span="12">
+            <el-col :span="12" class="mt-1">
                 <el-date-picker v-model="search.dateRange" type="daterange" align="right" unlink-panels range-separator="至"
                     start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions">
                 </el-date-picker>
@@ -19,24 +17,28 @@
         </el-row>
         <el-row>
             查询什么呢？
-            <el-tag v-for="tag in allTags" :key="tag.type" closable 
-                    @close="handleTagClose(tag)">
+            <el-tag v-for="(tag, idx) in allTags" :key="tag.type" closable @close="handleTagClose(idx)">
                 {{`${tag.type}: ${tag.value}`}}
             </el-tag>
         </el-row>
-        <el-table 
+        <el-table
             v-loading="loading"
-            :data="searchResult"
+            :data="items"
             style="width: 100%">
-            <el-table-column label="Date" prop="date">
+            <el-table-column type="expand">
+                <template slot-scope="props">
+                    <el-form label-position="left" inline class="table-expand">
+                        <el-form-item v-for="(value, key) in itemProps" :key="key" :label="value">
+                            <span>{{ props.row[key] }}</span>
+                        </el-form-item>
+                    </el-form>
+                </template>
             </el-table-column>
-            <el-table-column label="Name" prop="name">
+            <el-table-column v-for="(value, key) in simpleItemProps" :key="key" :prop="key" :label="value">
             </el-table-column>
-            <el-table-column label="Address" prop="address">
-            </el-table-column>
-            <el-table-column align="right">
+            <el-table-column align="right" min-width="90rem">
                 <template slot-scope="scope">
-                    <el-button size="mini" @click="$router.push(`/data/edit/${scope.row.id}`)">Edit</el-button>
+                    <el-button size="mini" @click="$router.push(`/spareparts/edit/${scope.row.id}`)">Edit</el-button>
                     <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
                 </template>
             </el-table-column>
@@ -85,20 +87,39 @@ export default {
                     }
                 }]
             },
+            raw_items: [],
             items: [],
             loading: false,
             search: {
                 tags: {},
                 dateRange: [new Date(0), new Date],
-                tmpTagType: 'name',
+                tmpTagType: '',
                 tmpTagValue: ''
             },
             inputVisible: false,
+            tmpItem: {},
+            itemProps: {
+                id: 'ID',
+                component: '组件',
+                requirement: '需要',
+                dosage: '剩余',
+                remarks: '标记',
+                createTime: '创建日期',
+                brandName: '品牌名称',
+                ingredientPerson: '录入人',
+                reviewer: '检查人'
+            },
+            simpleItemProps: {
+                id: 'ID',
+                component: '组件',
+                createTime: '创建日期',
+                ingredientPerson: '录入人',
+            }
         };
     },
     methods: {
-        handleTagClose(tag) {
-            this.search.tags[tag.type] = '';
+        handleClose(idx) {
+            this.search.tags.splice(idx, 1);
         },
         showInput() {
             this.inputVisible = true;
@@ -118,16 +139,15 @@ export default {
         },
         async fetch() {
             this.loading = true;
-            await new Promise((resolve, reject)=>{
-                setTimeout(() => {
-                    resolve();
-                }, 500);
-            });
-            this.items = new Array(5).fill({
-                name: '刘洋',
-                date: moment(new Date()).format('YY-MM-DD'),
-                address: '内蒙古科技大学',
-                id: 'test'
+            const res = await this.$http.get('/getAllSpareParts');
+            console.log(res.data.data.spareParts);
+            this.items = res.data.data.spareParts;
+            this.items.map(v => {
+                v.createTimeRaw = new Date(Number(v.createTime));
+                const tmp = moment(v.createTimeRaw);
+                v.createTime = tmp.format('YY年M月D号, hh:mm:ss');
+                console.log(tmp);
+                return v;
             });
             this.loading = false;
         },
@@ -150,26 +170,10 @@ export default {
                     message: '取消删除'
                 });
             });
-        }
-    },
-    created() {
-        this.fetch();
-    },
-    computed: {
-        allTags() {
-            let list = [];
-            for (let tag in this.search.tags) {
-                if (!this.search.tags[tag]) continue;
-                list.push({
-                    type: tag,
-                    value: this.search.tags[tag]
-                });
-            }
-            return list;
         },
-        searchResult() {
+        async getSearchResult() {
             let list = [];
-            for (let item of this.items) {
+            for (let item of this.rawItems) {
                 let ok = true;
                 let start = moment(this.search.dateRange[0]);
                 let end = moment(this.search.dateRange[1]);
@@ -187,6 +191,22 @@ export default {
             }
             return list;
         }
+    },
+    created() {
+        this.fetch();
+    },
+    computed: {
+        allTags() {
+            let list = [];
+            for (let tag in this.search.tags) {
+                if (!this.search.tags[tag]) continue;
+                list.push({
+                    type: tag,
+                    value: this.search.tags[tag]
+                });
+            }
+            return list;
+        },
     }
 }
 </script>
@@ -210,5 +230,15 @@ export default {
 .input-new-tag {
     margin-left: 10px;
     vertical-align: bottom;
+}
+
+.table-expand .el-form-item {
+    margin-right: 0;
+    margin-bottom: 0;
+    width: 50%;
+}
+
+.mt-1 {
+    margin-top: 0.33rem;
 }
 </style>
