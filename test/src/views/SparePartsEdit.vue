@@ -1,7 +1,7 @@
 <template>
     <div>
-        <h1>{{id ? "编辑" : "新建"}}物品</h1>
-        <el-form label-width="120px" @submit.native.prevent="save"
+        <h1>{{id ? "编辑" : "新建"}}库存</h1>
+        <el-form label-width="5rem" @submit.native.prevent="save"
             v-loading="loading">
             <el-form-item v-for="(value, key) in itemProps" :key="key" :label="value">
                 <el-date-picker
@@ -12,7 +12,7 @@
                 </el-date-picker>
                 <el-button type="primary"
                         v-if="key==='createTime'"
-                        @click="model.createTime=new Date()">现在</el-button>
+                        @click="model[key]=new Date()">当前时间</el-button>
                 <el-input v-model="model[key]" v-else></el-input>
             </el-form-item>
             <el-form-item>
@@ -53,7 +53,8 @@ export default {
             if (this.id) {
                 res = await this.$http.put(`/updateSpareParts`, this.model);
             } else {
-                res = await this.$http.post('rest/categories', this.model);
+                // res = await this.$http.post('rest/categories', this.model);
+                // TODO: 后端post
             }
             this.loading = false;
             this.$router.push('/spareparts/list');
@@ -76,6 +77,9 @@ export default {
     },
     created() {
         if (this.id) this.fetch();
+        for (let prop in this.itemProps) {
+            this.$set(this.model, prop, '');
+        }
     }
 }
 </script>

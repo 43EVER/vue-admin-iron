@@ -6,7 +6,7 @@
                     <el-select v-model="search.tmpTagType" slot="prepend" placeholder="请选择">
                         <el-option v-for="(value, key) in itemProps" :key="key" :label="value" :value="key"></el-option>
                     </el-select>
-                    <el-button slot="append" icon="el-icon-plus"></el-button>
+                    <el-button slot="append" icon="el-icon-search" @click="updateBySearch()"></el-button>
                 </el-input>
             </el-col>
             <el-col :span="12" class="mt-1">
@@ -16,7 +16,6 @@
             </el-col>
         </el-row>
         <el-row>
-            查询什么呢？
             <el-tag v-for="(tag, idx) in allTags" :key="tag.type" closable @close="handleTagClose(idx)">
                 {{`${tag.type}: ${tag.value}`}}
             </el-tag>
@@ -87,7 +86,7 @@ export default {
                     }
                 }]
             },
-            raw_items: [],
+            rawItems: [],
             items: [],
             loading: false,
             search: {
@@ -121,26 +120,10 @@ export default {
         handleClose(idx) {
             this.search.tags.splice(idx, 1);
         },
-        showInput() {
-            this.inputVisible = true;
-            this.$nextTick(_ => {
-                this.$refs.saveTagInput.$refs.input.focus();
-            });
-        },
-        handleInputConfirm() {
-            let tmp = {};
-            tmp.type = this.search.tmpTagType;
-            tmp.value = this.search.tmpTagValue;
-            if (tmp.value) {
-                this.search.tags.push(tmp);
-            }
-            this.inputVisible = false;
-            this.inputValue = '';
-        },
         async fetch() {
             this.loading = true;
             const res = await this.$http.get('/getAllSpareParts');
-            console.log(res.data.data.spareParts);
+            this.rawItems = res.data.data.spareParts;
             this.items = res.data.data.spareParts;
             this.items.map(v => {
                 v.createTimeRaw = new Date(Number(v.createTime));
@@ -151,7 +134,7 @@ export default {
             });
             this.loading = false;
         },
-        handleDelete(index, row) {
+        async handleDelete(index, row) {
             this.$confirm(`是否确定删除 "${row.name}"`, '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
@@ -171,7 +154,7 @@ export default {
                 });
             });
         },
-        async getSearchResult() {
+        async updateBySearch() {
             let list = [];
             for (let item of this.rawItems) {
                 let ok = true;
@@ -189,7 +172,7 @@ export default {
                 }
                 if (ok) list.push(item);
             }
-            return list;
+            this.items = list;
         }
     },
     created() {

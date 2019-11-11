@@ -8,7 +8,7 @@
                         <el-option label="名字" value="name"></el-option>
                         <el-option label="地址" value="address"></el-option>
                     </el-select>
-                    <el-button slot="append" icon="el-icon-plus"></el-button>
+                    <el-button slot="append" icon="el-icon-search"></el-button>
                 </el-input>
             </el-col>
             <el-col :span="12">
@@ -19,8 +19,7 @@
         </el-row>
         <el-row>
             查询什么呢？
-            <el-tag v-for="tag in allTags" :key="tag.type" closable 
-                    @close="handleTagClose(tag)">
+            <el-tag v-for="tag in allTags" :key="tag.type" class="tmp">
                 {{`${tag.type}: ${tag.value}`}}
             </el-tag>
         </el-row>
@@ -46,7 +45,7 @@
 
 <script>
 import moment from 'moment';
-
+import animate from 'animate.css'
 export default {
     data() {
         return {
@@ -210,5 +209,9 @@ export default {
 .input-new-tag {
     margin-left: 10px;
     vertical-align: bottom;
+}
+
+.tmp {
+    transition: all 1s ease;
 }
 </style>
