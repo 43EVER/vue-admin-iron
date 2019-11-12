@@ -26,12 +26,18 @@
             style="width: 100%">
             <el-table-column type="expand">
                 <template slot-scope="scope">
+                    <el-form>
+                        <el-col :span="8" v-for="(value, key) in itemProps" :key="key">
+                            <el-form-item :prop="key" :label="value">
+                                <span>{{ scope.row[key] }}</span>
+                            </el-form-item>
+                        </el-col>
+                    </el-form>
                     <el-table :data="scope.row.items">
-                        <el-table-column label="ID" prop="id"></el-table-column>
-                        <el-table-column label="成分" prop="component"></el-table-column>
-                        <el-table-column label="需求量" prop="requirement"></el-table-column>
-                        <el-table-column label="配料量" prop="dosage"></el-table-column>
-                        <el-table-column label="重要原料备注" prop="remarks"></el-table-column>
+                        <el-table-column label="序号" prop="number"></el-table-column>
+                        <el-table-column label="压制" prop="suppress"></el-table-column>
+                        <el-table-column label="模宽" prop="modeWidth"></el-table-column>
+                        <el-table-column label="取向" prop="orientation"></el-table-column>
                     </el-table>
                 </template>
             </el-table-column>
@@ -39,7 +45,7 @@
             </el-table-column>
             <el-table-column align="right" min-width="90rem">
                 <template slot-scope="scope">
-                    <el-button size="mini" @click="$router.push(`/spareparts/edit/${scope.row.brandName}`)">Edit</el-button>
+                    <el-button size="mini" @click="$router.push(`/pressurerecord/edit/${scope.row.id}`)">Edit</el-button>
                     <el-button size="mini" type="danger" @click="handleDelete(scope.row)">Delete</el-button>
                 </template>
             </el-table-column>
@@ -97,24 +103,35 @@ export default {
                 tmpTagType: 'id',
                 tmpTagValue: ''
             },
-            inputVisible: false,
-            tmpItem: {},
             itemProps: {
                 id: 'ID',
+                number: '编号',
+                pressNumber: '压机编号',
                 createTime: '创建日期',
-                brandName: '牌号',
-                component: '成分',
-                requirement: '需求量',
-                dosage: '配料量',
+                roughcastNumber: '毛胚数量（块）',
+                picking: '领料',
+                singleProduct: '产品单重',
+                toolsNumber: '模具编号',
+                toolsSize: '模具尺寸',
+                suppressPressure: '压制压力',
+                suppressTime: '压制时间',
+                magnetizingCurrent: '充磁电流',
+                magentizingTime: '充磁时间',
+                demagnetizationCurrent: '退磁电流',
+                demagnetizatioTime: '退磁时间',
+                oxygenWeighingRoom: '称料室氧含量',
+                oxygenPackingRoom: '包装室氧含量',
+                starNitrogen: '氮气量（开始）',
+                endNitrogen: '氮气量（结束）',
+                operator: '制作人',
                 remarks: '备注',
-                ingredientPerson: '复合人',
-                reviewer: '配料人'
             },
             simpleItemProps: {
-                brandName: '牌号',
+                number: '编号',
                 createTime: '创建日期',
-                ingredientPerson: '复合人',
-                reviewer: '配料人'
+                pressNumber: '压机编号',
+                operator: '制作人',
+                remarks: '备注',
             },
             integratedData: []
         };
@@ -126,8 +143,8 @@ export default {
         },
         async fetch() {
             this.loading = true;
-            const res = await this.$http.get('/getAllSpareParts');
-            this.rawItems = res.data.data.spareParts;
+            const res = await this.$http.get('/getAllPressureRecord');
+            this.rawItems = res.data.data.pressureRecords;
             this.rawItems.map(v => {
                 v.createTimeRaw = new Date(Number(v.createTime));
                 const tmp = moment(v.createTimeRaw);
@@ -138,49 +155,51 @@ export default {
             this.updateBySearch();
         },
         async handleDelete(row) {
-            console.log(row.brandName);
-            this.$confirm(`是否确定删除 "${row.brandName}"`, '提示', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning'
-            }).then(async () => {
-                this.loading = true;
-                for (let idx in this.rawItems) {
-                    let item = this.rawItems[idx];
-                    if (item.brandName === row.brandName) {
-                        await this.$http.delete(`/deleteSpareParts/${item.id}`);
-                    }
-                }
-                await this.fetch();
-                this.$message({
-                    type: 'success',
-                    message: '删除成功!'
-                });
-            }, async() => {
-                this.$message({
-                    type: 'info',
-                    message: '取消删除'
-                });
-            });
+            // console.log(row.brandName);
+            // this.$confirm(`是否确定删除 "${row.brandName}"`, '提示', {
+            //     confirmButtonText: '确定',
+            //     cancelButtonText: '取消',
+            //     type: 'warning'
+            // }).then(async () => {
+            //     this.loading = true;
+            //     for (let idx in this.rawItems) {
+            //         let item = this.rawItems[idx];
+            //         if (item.brandName === row.brandName) {
+            //             await this.$http.delete(`/deletePressureRecord/${item.id}`);
+            //         }
+            //     }
+            //     await this.fetch();
+            //     this.$message({
+            //         type: 'success',
+            //         message: '删除成功!'
+            //     });
+            // }, async() => {
+            //     this.$message({
+            //         type: 'info',
+            //         message: '取消删除'
+            //     });
+            // });
         },
         async updateBySearch() {
-            let list = [];
-            const start = moment(this.search.dateRange[0]);
-            const end = moment(this.search.dateRange[1]);
-            for (let idx in this.rawItems) {
-                let item = this.rawItems[idx];
-                let ok = true;
-                const now = moment(item.createTimeRaw);
-                if (now.isBefore(start) || now.isAfter(end)) continue;
-                for (let key in this.search.tags) {
-                    if (!String(item[key]).match(this.search.tags[key])) {
-                        ok = false;
-                        break;
-                    }
-                }
-                if (ok) list.push(item);
-            }
-            this.items = list;
+            console.log(this.rawItems);
+            this.items = this.rawItems;
+            // let list = [];
+            // const start = moment(this.search.dateRange[0]);
+            // const end = moment(this.search.dateRange[1]);
+            // for (let idx in this.rawItems) {
+            //     let item = this.rawItems[idx];
+            //     let ok = true;
+            //     const now = moment(item.createTimeRaw);
+            //     if (now.isBefore(start) || now.isAfter(end)) continue;
+            //     for (let key in this.search.tags) {
+            //         if (!String(item[key]).match(this.search.tags[key])) {
+            //             ok = false;
+            //             break;
+            //         }
+            //     }
+            //     if (ok) list.push(item);
+            // }
+            // this.items = list;
         }
     },
     created() {
@@ -189,24 +208,25 @@ export default {
 
     watch: {
         items() {
-            let res = {};
-            this.items.forEach(item => {
-                console.log(item.brandName);
-                if (res[item.brandName] === undefined) {
-                    res[item.brandName] = {};
-                    res[item.brandName].brandName = item.brandName;
-                    res[item.brandName].remarks = item.remarks;
-                    res[item.brandName].ingredientPerson = item.ingredientPerson;
-                    res[item.brandName].reviewer = item.reviewer;
-                    res[item.brandName].items = [];
-                    res[item.brandName].createTime = item.createTime;
-                }
-                res[item.brandName].items.push(item);
-            });
-            this.integratedData = [];
-            for (let key in res) {
-                this.integratedData.push(res[key]);
-            }
+            this.integratedData = this.items;
+            // let res = {};
+            // this.items.forEach(item => {
+            //     console.log(item.brandName);
+            //     if (res[item.brandName] === undefined) {
+            //         res[item.brandName] = {};
+            //         res[item.brandName].brandName = item.brandName;
+            //         res[item.brandName].remarks = item.remarks;
+            //         res[item.brandName].ingredientPerson = item.ingredientPerson;
+            //         res[item.brandName].reviewer = item.reviewer;
+            //         res[item.brandName].items = [];
+            //         res[item.brandName].createTime = item.createTime;
+            //     }
+            //     res[item.brandName].items.push(item);
+            // });
+            // this.integratedData = [];
+            // for (let key in res) {
+            //     this.integratedData.push(res[key]);
+            // }
         }
     },
 
@@ -222,33 +242,6 @@ export default {
             }
             return list;
         },
-
-        // integratedData() {
-        //     let res = {};
-        //     this.items.forEach(item => {
-        //         console.log(item.brandName);
-        //         if (res[item.brandName] === undefined) {
-        //             res[item.brandName] = {};
-        //             res[item.brandName].brandName = item.brandName;
-        //             res[item.brandName].remarks = item.remarks;
-        //             res[item.brandName].ingredientPerson = item.ingredientPerson;
-        //             res[item.brandName].reviewer = item.reviewer;
-        //             res[item.brandName].items = [];
-        //             res[item.brandName].createTime = item.createTime;
-        //         }
-        //         res[item.brandName].items.push(item);
-        //     });
-        //     let arr = [];
-        //     // res.forEach((value, key) => {
-        //     //     console.log(value);
-        //     //     console.log(key);
-        //     // });
-        //     // return res;
-        //     for (let key in res) {
-        //         arr.push(res[key]);
-        //     }
-        //     return arr;
-        // }
     }
 }
 </script>

@@ -22,25 +22,23 @@
         </el-row>
         <el-table
             v-loading="loading"
-            :data="integratedData"
+            :data="items"
             style="width: 100%">
             <el-table-column type="expand">
-                <template slot-scope="scope">
-                    <el-table :data="scope.row.items">
-                        <el-table-column label="ID" prop="id"></el-table-column>
-                        <el-table-column label="成分" prop="component"></el-table-column>
-                        <el-table-column label="需求量" prop="requirement"></el-table-column>
-                        <el-table-column label="配料量" prop="dosage"></el-table-column>
-                        <el-table-column label="重要原料备注" prop="remarks"></el-table-column>
-                    </el-table>
+                <template slot-scope="props">
+                    <el-form label-position="left" inline class="table-expand">
+                        <el-form-item v-for="(value, key) in itemProps" :key="key" :label="value">
+                            <span>{{ props.row[key] }}</span>
+                        </el-form-item>
+                    </el-form>
                 </template>
             </el-table-column>
             <el-table-column v-for="(value, key) in simpleItemProps" :key="key" :prop="key" :label="value">
             </el-table-column>
             <el-table-column align="right" min-width="90rem">
                 <template slot-scope="scope">
-                    <el-button size="mini" @click="$router.push(`/spareparts/edit/${scope.row.brandName}`)">Edit</el-button>
-                    <el-button size="mini" type="danger" @click="handleDelete(scope.row)">Delete</el-button>
+                    <el-button size="mini" @click="$router.push(`/stock/edit/${scope.row.id}`)">Edit</el-button>
+                    <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -100,23 +98,19 @@ export default {
             inputVisible: false,
             tmpItem: {},
             itemProps: {
-                id: 'ID',
+                stockName: '名称',
+                company: '单位',
                 createTime: '创建日期',
-                brandName: '牌号',
-                component: '成分',
-                requirement: '需求量',
-                dosage: '配料量',
-                remarks: '备注',
-                ingredientPerson: '复合人',
-                reviewer: '配料人'
+                initialStage: '期初',
+                increase: '增加',
+                reduce: '减少',
+                weight: '重量',
             },
             simpleItemProps: {
-                brandName: '牌号',
+                stockName: '名称',
+                weight: '重量',
                 createTime: '创建日期',
-                ingredientPerson: '复合人',
-                reviewer: '配料人'
-            },
-            integratedData: []
+            }
         };
     },
     methods: {
@@ -126,8 +120,9 @@ export default {
         },
         async fetch() {
             this.loading = true;
-            const res = await this.$http.get('/getAllSpareParts');
-            this.rawItems = res.data.data.spareParts;
+            const res = await this.$http.get('/getAllStock');
+            console.log()
+            this.rawItems = res.data.data.allStock;
             this.rawItems.map(v => {
                 v.createTimeRaw = new Date(Number(v.createTime));
                 const tmp = moment(v.createTimeRaw);
@@ -137,20 +132,14 @@ export default {
             this.loading = false;
             this.updateBySearch();
         },
-        async handleDelete(row) {
-            console.log(row.brandName);
-            this.$confirm(`是否确定删除 "${row.brandName}"`, '提示', {
+        async handleDelete(index, row) {
+            this.$confirm(`是否确定删除 "${row.id}"`, '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(async () => {
-                this.loading = true;
-                for (let idx in this.rawItems) {
-                    let item = this.rawItems[idx];
-                    if (item.brandName === row.brandName) {
-                        await this.$http.delete(`/deleteSpareParts/${item.id}`);
-                    }
-                }
+                const res = await this.$http.delete(`deleteStock/${row.id}`);
+                console.log(res);
                 await this.fetch();
                 this.$message({
                     type: 'success',
@@ -186,30 +175,6 @@ export default {
     created() {
         this.fetch();
     },
-
-    watch: {
-        items() {
-            let res = {};
-            this.items.forEach(item => {
-                console.log(item.brandName);
-                if (res[item.brandName] === undefined) {
-                    res[item.brandName] = {};
-                    res[item.brandName].brandName = item.brandName;
-                    res[item.brandName].remarks = item.remarks;
-                    res[item.brandName].ingredientPerson = item.ingredientPerson;
-                    res[item.brandName].reviewer = item.reviewer;
-                    res[item.brandName].items = [];
-                    res[item.brandName].createTime = item.createTime;
-                }
-                res[item.brandName].items.push(item);
-            });
-            this.integratedData = [];
-            for (let key in res) {
-                this.integratedData.push(res[key]);
-            }
-        }
-    },
-
     computed: {
         allTags() {
             let list = [];
@@ -222,33 +187,6 @@ export default {
             }
             return list;
         },
-
-        // integratedData() {
-        //     let res = {};
-        //     this.items.forEach(item => {
-        //         console.log(item.brandName);
-        //         if (res[item.brandName] === undefined) {
-        //             res[item.brandName] = {};
-        //             res[item.brandName].brandName = item.brandName;
-        //             res[item.brandName].remarks = item.remarks;
-        //             res[item.brandName].ingredientPerson = item.ingredientPerson;
-        //             res[item.brandName].reviewer = item.reviewer;
-        //             res[item.brandName].items = [];
-        //             res[item.brandName].createTime = item.createTime;
-        //         }
-        //         res[item.brandName].items.push(item);
-        //     });
-        //     let arr = [];
-        //     // res.forEach((value, key) => {
-        //     //     console.log(value);
-        //     //     console.log(key);
-        //     // });
-        //     // return res;
-        //     for (let key in res) {
-        //         arr.push(res[key]);
-        //     }
-        //     return arr;
-        // }
     }
 }
 </script>
@@ -261,23 +199,15 @@ export default {
     margin-left: 10px;
 }
 
-.button-new-tag {
-    margin-left: 10px;
-    height: 32px;
-    line-height: 30px;
-    padding-top: 0;
-    padding-bottom: 0;
-}
-
-.input-new-tag {
-    margin-left: 10px;
-    vertical-align: bottom;
-}
-
 .table-expand .el-form-item {
     margin-right: 0;
     margin-bottom: 0;
-    width: 50%;
+    width: 40%;
+}
+
+.table-expand label {
+    width: 10rem;
+    color: #99a9bf;
 }
 
 .mt-1 {

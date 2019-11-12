@@ -17,9 +17,24 @@
               <el-menu-item index="/data/edit">DataEdit</el-menu-item>
             </el-menu-item-group>
             <el-menu-item-group>
-              <template slot="title">备料库存管理</template>
-              <el-menu-item index="/spareparts/list">备料库存列表</el-menu-item>
-              <el-menu-item index="/spareparts/edit">修改备料库存</el-menu-item>
+              <template slot="title">备料管理</template>
+              <el-menu-item index="/spareparts/list">备料列表</el-menu-item>
+              <el-menu-item index="/spareparts/edit">修改备料</el-menu-item>
+            </el-menu-item-group>
+            <el-menu-item-group>
+            <template slot="title">制粉工艺记录管理</template>
+              <el-menu-item index="/flourmillingprocess/list">制粉工艺记录列表</el-menu-item>
+              <el-menu-item index="/flourmillingprocess/edit">修改制粉工艺记录</el-menu-item>
+            </el-menu-item-group>
+            <el-menu-item-group>
+            <template slot="title">库存管理</template>
+              <el-menu-item index="/stock/list">库存列表</el-menu-item>
+              <el-menu-item index="/stock/edit">修改库存</el-menu-item>
+            </el-menu-item-group>
+            <el-menu-item-group>
+            <template slot="title">压型记录管理</template>
+              <el-menu-item index="/pressurerecord/list">压型记录列表</el-menu-item>
+              <el-menu-item index="/pressurerecord/edit">修改压型记录</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="2">
