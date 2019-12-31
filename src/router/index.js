@@ -1,6 +1,5 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Home from "../views/Home.vue";
 
 Vue.use(VueRouter);
 
@@ -8,10 +7,13 @@ const routes = [
   {
     path: "/",
     name: "home",
-    component: Home,
+    component: () => import("../views/Home.vue"),
     children: [
       { path: "/stock", component: () => import("../views/Stock.vue") },
-      { path: "/ruku", component: () => import("../views/ruku.vue") }
+      { path: "/storage", component: () => import("../views/Storage.vue") },
+      { path: "/spareparts", component: () => import("../views/SpareParts.vue") },
+      { path: "/smeltingrecord", component: () => import("../views/SmeltingRecord.vue") },
+      { path: "/smelting", component: () => import("../views/Smelting.vue") }
     ]
   }
   // {

@@ -2,7 +2,7 @@
   <div class="stock" v-loading="loading">
     <el-row>
       <el-col :span="4">
-        <el-button type="primary" @click="handleCreate">新增入库记录</el-button>
+        <el-button type="primary" @click="handleCreate">新增原料</el-button>
       </el-col>
       <el-col :span="6">
         <el-input placeholder="请输入要搜索的原料名称" v-model="searchStockName">
@@ -20,38 +20,16 @@
           <el-popover :ref="'popover' + scope.$index">
             <p>确定删除 {{ scope.row.stockName }} 吗？</p>
             <div style="text-align: right; margin: 0">
-              <el-button
-                type="text"
-                size="mini"
-                @click="closeDeletePopover(scope.$index)"
-                >取消</el-button
-              >
-              <el-button
-                type="danger"
-                size="mini"
-                @click="handleDelete(scope.row, scope.$index)"
-                >确定</el-button
-              >
+              <el-button type="text" size="mini" @click="closeDeletePopover(scope.$index)">取消</el-button>
+              <el-button type="danger" size="mini" @click="handleDelete(scope.row, scope.$index)">确定</el-button>
             </div>
-            <el-button
-              size="mini"
-              type="danger"
-              slot="reference"
-              style="margin-left: 1rem"
-              >删除</el-button
-            >
+            <el-button size="mini" type="danger" slot="reference" style="margin-left: 1rem">删除</el-button>
           </el-popover>
         </template>
       </el-table-column>
     </el-table>
-    <el-dialog
-      :title="editDialogTitle"
-      width="30%"
-      :before-close="handleEditDialogClose"
-      :open="handleEditDialogOpen"
-      :visible="editDialogVisible"
-      center
-    >
+    <el-dialog :title="editDialogTitle" width="30%" :before-close="handleEditDialogClose"
+      :visible="editDialogVisible" center>
       <el-form :model="editDialogData">
         <el-form-item label="原料名称">
           <el-input v-model="editDialogData.stockName"></el-input>
@@ -71,58 +49,37 @@
   </div>
 </template>
 <script>
+import { mapGetters } from "vuex";
 export default {
   data() {
     return {
-      data: {
-        stock: []
-      },
       searchStockName: "",
       loading: true,
       editDialogVisible: false,
       editDialogTitle: "",
-      editDialogData: {}
+      editDialogData: {
+        id: undefined,
+        stockName: "",
+        unit: "",
+        weight: 0
+      }
     };
   },
   computed: {
     filteredData() {
       if (this.searchStockName)
-        return this.data.stock.filter(e => {
-          if (e.stockName.indexOf(this.searchStockName) !== -1) return true;
+        return this.stockData.filter(item => {
+          if (item.stockName.indexOf(this.searchStockName) !== -1) return true;
           return false;
         });
-      return this.data.stock;
-    }
+      return this.stockData;
+    },
+    ...mapGetters(["stockData"])
   },
   created() {
     this.fetch();
-    console.log(this.$route.path);
   },
   methods: {
-    async fetch() {
-      this.loading = true;
-      // const res = await this.$http.get("/api/getAllStocks");
-      // console.log(res.data.data.stock);
-      // this.data = res.data.data;
-      this.data.stock = [
-        { id: 1, stockName: "Fe", unit: "Kg", weight: 120 },
-        { id: 2, stockName: "Al", unit: "Kg", weight: 240 }
-      ];
-      this.data.stock.forEach(e => {
-        e.popoverVisible = false;
-      });
-      this.loading = false;
-    },
-    handleEdit(row) {
-      this.editDialogVisible = true;
-      this.editDialogTitle = "编辑 " + row.stockName;
-      this.editDialogData = row;
-    },
-    handleEditDialogOpen(row) {
-      this.editDialogVisible = true;
-      this.editDialogTitle = "编辑 " + row.stockName;
-      this.editDialogData = row;
-    },
     handleEditDialogClose(done) {
       this.$confirm("确认关闭？")
         .then(() => {
@@ -131,24 +88,44 @@ export default {
         })
         .catch(() => {});
     },
+    closeDeletePopover(index) {
+      this.$refs["popover" + index].doClose();
+    },
+    async fetch() {
+      this.loading = true;
+      await this.$store.dispatch("fetchStockData");
+      this.loading = false;
+    },
+    handleEdit(row) {
+      this.editDialogVisible = true;
+      this.editDialogTitle = "编辑 " + row.stockName;
+      this.editDialogData = Object.assign(this.editDialogData, row);
+    },
     handleCreate() {
       this.editDialogVisible = true;
       this.editDialogTitle = "新增原料";
       this.editDialogData.weight = 0;
+      this.editDialogData.id = undefined;
+      this.editDialogData.stockName = "";
+      this.editDialogData.unit = "";
     },
     async submitDialogData() {
-      if (this.editDialogTitle.indexOf("编辑") !== -1) {
-        console.log("update data");
-      } else {
-        console.log("post data");
-      }
+      this.loading = true;
+      this.editDialogVisible = false;
+      await this.$store.dispatch({
+        type: "updateStockData",
+        data: this.editDialogData
+      });
+      this.loading = false;
     },
-    handleDelete(row, index) {
-      console.log("has been deleted");
+    async handleDelete(row, index) {
       this.closeDeletePopover(index);
-    },
-    closeDeletePopover(index) {
-      this.$refs["popover" + index].doClose();
+      this.loading = true;
+      await this.$store.dispatch({
+        type: "deleteStockDataById",
+        data: row.id
+      });
+      this.loading = false;
     }
   }
 };

@@ -7,7 +7,7 @@
         router
         :default-active="$route.path"
       >
-        <el-submenu>
+        <el-submenu index="/">
           <template slot="title">
             <i class="el-icon-location"></i>
             <span slot="title">常规选项</span>
@@ -15,28 +15,19 @@
           <el-menu-item-group>
             <span slot="title">仓库</span>
             <el-menu-item index="/stock">原料库存</el-menu-item>
-            <el-menu-item index="/ruku">入库管理</el-menu-item>
+            <el-menu-item index="/storage">入库管理</el-menu-item>
           </el-menu-item-group>
-          <el-menu-item-group title="分组2">
-            <el-menu-item index="1-3">选项3</el-menu-item>
+          <el-menu-item-group>
+            <span slot="title">业务</span>
+            <el-menu-item index="/spareparts">备料</el-menu-item>
+            <el-menu-item index="/smeltingrecord">冶炼操作记录</el-menu-item>
+            <el-menu-item index="/smelting">冶炼操作记录</el-menu-item>
           </el-menu-item-group>
           <el-submenu index="1-4">
             <span slot="title">选项4</span>
             <el-menu-item index="1-4-1">选项1</el-menu-item>
           </el-submenu>
         </el-submenu>
-        <el-menu-item index="2">
-          <i class="el-icon-menu"></i>
-          <span slot="title">导航二</span>
-        </el-menu-item>
-        <el-menu-item index="3" disabled>
-          <i class="el-icon-document"></i>
-          <span slot="title">导航三</span>
-        </el-menu-item>
-        <el-menu-item index="4">
-          <i class="el-icon-setting"></i>
-          <span slot="title">导航四</span>
-        </el-menu-item>
       </el-menu>
       <el-container>
         <el-header>
@@ -74,6 +65,9 @@ export default {
     };
   },
   name: "home",
+  async created() {
+    this.$store.dispatch("init");
+  },
   methods: {
     toggleCollapse() {
       this.isCollapse = !this.isCollapse;

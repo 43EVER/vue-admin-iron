@@ -17,3 +17,8 @@ Vue.prototype.$http = http;
 
 import animated from "animate.css";
 Vue.use(animated);
+
+Vue.filter(
+  "dateToTime",
+  value => `${value.getHours() }:${value.getMinutes()}:${value.getSeconds()}`
+);
