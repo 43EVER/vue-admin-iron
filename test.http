@@ -1,4 +1,4 @@
-@BASE = http://192.168.3.9:8080/web_war_exploded/api
+@BASE = http://localhost:8080/web_war_exploded/api
 
 ### getAllSpareParts
 GET {{BASE}}/getAllSpareParts

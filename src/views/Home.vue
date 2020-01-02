@@ -19,6 +19,7 @@
             <el-menu-item index="/flourstorage">粉库存</el-menu-item>
             <el-menu-item index="/product">产品库</el-menu-item>
             <el-menu-item index="/sales">销售库</el-menu-item>
+            <el-menu-item index="/statistical">统计数据</el-menu-item>
           </el-menu-item-group>
           <el-menu-item-group>
             <span slot="title">业务</span>
@@ -29,6 +30,10 @@
             <el-menu-item index="/pressurerecord">压型记录</el-menu-item>
             <el-menu-item index="/pressedprocessRecord">压型工艺记录</el-menu-item>
             <el-menu-item index="/sinter">烧结记录</el-menu-item>
+          </el-menu-item-group>
+          <el-menu-item-group>
+            <span slot="title">用户管理</span>
+            <el-menu-item index="/users">用户管理</el-menu-item>
           </el-menu-item-group>
         </el-submenu>
       </el-menu>

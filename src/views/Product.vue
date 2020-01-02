@@ -195,7 +195,7 @@ export default {
       let formData = new FormData();
       formData.append("upload", params.file);
       const res = await this.$http.post("/api/fileupload", formData, { headers: { 'Content-Type': 'multipart/form-data' } });
-      return `http://192.168.3.9:8080/web_war_exploded/uploads/${res.data.data.ImageName}`;
+      return `http://localhost:8080/web_war_exploded/uploads/${res.data.data.ImageName}`;
     }
   }
 };

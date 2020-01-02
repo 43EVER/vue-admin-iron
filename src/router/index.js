@@ -20,13 +20,34 @@ const routes = [
       { path: "/pressurerecord", component: () => import("../views/PressureRecord.vue") },
       { path: "/pressedprocessRecord", component: () => import("../views/PressedProcessRecord.vue") },
       { path: "/sinter", component: () => import("../views/Sinter.vue") },
-      { path: "/sales", component: () => import("../views/Sales.vue") }
+      { path: "/sales", component: () => import("../views/Sales.vue") },
+      { path: "/statistical", component: () => import("../views/Statistical.vue") },
+      { path: "/users", component: () => import("../views/Users.vue") }
     ]
+  },
+  {
+    path: "/login",
+    name: "login",
+    component: () => import("../views/Login.vue")
   }
 ];
 
 const router = new VueRouter({
   routes
+});
+
+router.beforeEach((to, from, next) => {
+  if (to.path === "/login") next();
+  else {
+    let userInfo = sessionStorage.getItem("userLoginInfo");
+    if (userInfo) {
+      next();
+    } else {
+      next({
+        path: "/login"
+      });
+    }
+  }
 });
 
 export default router;
