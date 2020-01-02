@@ -16,17 +16,20 @@
             <span slot="title">仓库</span>
             <el-menu-item index="/stock">原料库存</el-menu-item>
             <el-menu-item index="/storage">入库管理</el-menu-item>
+            <el-menu-item index="/flourstorage">粉库存</el-menu-item>
+            <el-menu-item index="/product">产品库</el-menu-item>
+            <el-menu-item index="/sales">销售库</el-menu-item>
           </el-menu-item-group>
           <el-menu-item-group>
             <span slot="title">业务</span>
             <el-menu-item index="/spareparts">备料</el-menu-item>
             <el-menu-item index="/smeltingrecord">冶炼操作记录</el-menu-item>
-            <el-menu-item index="/smelting">冶炼操作记录</el-menu-item>
+            <el-menu-item index="/smelting">冶炼记录</el-menu-item>
+            <el-menu-item index="/flourmilling">制粉操作记录</el-menu-item>
+            <el-menu-item index="/pressurerecord">压型记录</el-menu-item>
+            <el-menu-item index="/pressedprocessRecord">压型工艺记录</el-menu-item>
+            <el-menu-item index="/sinter">烧结记录</el-menu-item>
           </el-menu-item-group>
-          <el-submenu index="1-4">
-            <span slot="title">选项4</span>
-            <el-menu-item index="1-4-1">选项1</el-menu-item>
-          </el-submenu>
         </el-submenu>
       </el-menu>
       <el-container>

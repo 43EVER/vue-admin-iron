@@ -30,10 +30,12 @@ export default {
   actions: {
     async fetchSmeltingRecordData({ commit }) {
       const res = await Vue.prototype.$http.get("/api/getAllSmeltingRecord");
-      commit({
-        type: "updateSmeltingRecordData",
-        data: res.data.data.SmeltingRecords
-      });
+      if (res.data.data) {
+        commit({
+          type: "updateSmeltingRecordData",
+          data: res.data.data.SmeltingRecords
+        });
+      }
     },
     async updateSmeltingRecordData({ dispatch }, payload) {
       if (payload.data.id) {
@@ -50,10 +52,12 @@ export default {
 
     async fetchSmeltingData({ commit }) {
       const res = await Vue.prototype.$http.get("/api/getAllSmelt");
-      commit({
-        type: "updateSmeltingData",
-        data: res.data.data.smelt
-      });
+      if (res.data.data) {
+        commit({
+          type: "updateSmeltingData",
+          data: res.data.data.smelt
+        });
+      }
     },
     async updateSmeltingData({ dispatch }, payload) {
       if (payload.data.id) {

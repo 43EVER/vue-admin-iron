@@ -13,7 +13,7 @@
     <el-table :data="filteredData">
       <el-table-column type="expand">
         <template slot-scope="props">
-          <el-table :data="props.row.data">
+          <el-table :data="props.row.data" border>
             <el-table-column prop="composition" label="成分"></el-table-column>
             <el-table-column prop="requirementWeight" label="需求量"></el-table-column>
             <el-table-column prop="ingredientsWeigth" label="配料量"></el-table-column>

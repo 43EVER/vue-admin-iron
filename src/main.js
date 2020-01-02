@@ -20,5 +20,5 @@ Vue.use(animated);
 
 Vue.filter(
   "dateToTime",
-  value => `${value.getHours() }:${value.getMinutes()}:${value.getSeconds()}`
+  value => `${value.getHours()}:${value.getMinutes()}:${value.getSeconds()}`
 );

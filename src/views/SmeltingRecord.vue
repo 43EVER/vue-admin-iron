@@ -10,7 +10,7 @@
         </el-input>
       </el-col>
     </el-row>
-    <el-table :data="filteredData">
+    <el-table :data="filteredData" border>
       <el-table-column type="expand">
         <template slot-scope="props">
           <el-table :data="props.row.smeltingDetails" border>
@@ -344,8 +344,8 @@ export default {
       data.forEach(item => {
         item.smeltingDetails.forEach(subItem => {
           subItem.col2 = new Date(Number(subItem.col2));
-        })
-      })
+        });
+      });
       return data;
     },
     ...mapGetters(["smeltingRecordData"])

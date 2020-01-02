@@ -33,15 +33,18 @@ export default {
         }
       });
       return data;
-    }
+    },
+    rawSparePartsData: state => state.rawSparePartsData
   },
   actions: {
     async fetchSparePartsData({ commit }) {
       const res = await Vue.prototype.$http.get("/api/getAllSpareParts");
-      commit({
-        type: "updateSpareParts",
-        data: res.data.data.SpareParts
-      });
+      if (res.data.data) {
+        commit({
+          type: "updateSpareParts",
+          data: res.data.data.SpareParts
+        });
+      }
     },
     async deleteSparePartsDataBySerial({ dispatch, getters }, payload) {
       for (let index in getters.sparePartsData) {

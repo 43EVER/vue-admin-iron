@@ -14,13 +14,17 @@ export default {
     }
   },
   getters: {
-    stockData: state => {
+    stockData: (state, getters) => {
       let [...data] = state.rawStockData;
       data.forEach(item => {
         item.weight = 0;
         state.rawStorageData.forEach(item2 => {
           if (item.stockName === item2.name)
             item.weight += Number(item2.numbers);
+        });
+        getters.rawSparePartsData.forEach(item2 => {
+          if (item.stockName === item2.composition)
+            item.weight -= Number(item2.requirementWeight);
         });
       });
       return data;
@@ -51,20 +55,17 @@ export default {
     }
   },
   actions: {
-    async init({ dispatch }) {
-      dispatch("fetchStockData");
-      dispatch("fetchStorageData");
-    },
-
     async fetchStockData({ commit }) {
       const res = await Vue.prototype.$http.get("/api/getAllStocks");
-      res.data.data.stock.forEach(item => {
-        item.weight = 0;
-      });
-      commit({
-        type: "updateStock",
-        data: res.data.data.stock
-      });
+      if (res.data.data) {
+        res.data.data.stock.forEach(item => {
+          item.weight = 0;
+        });
+        commit({
+          type: "updateStock",
+          data: res.data.data.stock
+        });
+      }
     },
     async updateStockData({ dispatch }, payload) {
       if (payload.data.id) {
@@ -81,10 +82,12 @@ export default {
 
     async fetchStorageData({ commit }) {
       const res = await Vue.prototype.$http.get("/api/getAllStorage");
-      commit({
-        type: "updateStorage",
-        data: res.data.data.storages
-      });
+      if (res.data.data) {
+        commit({
+          type: "updateStorage",
+          data: res.data.data.storages
+        });
+      }
     },
     async updateStorageData({ dispatch }, payload) {
       if (payload.data.id) {
