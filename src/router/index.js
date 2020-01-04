@@ -12,6 +12,7 @@ const routes = [
       { path: "/stock", component: () => import("../views/Stock.vue") },
       { path: "/storage", component: () => import("../views/Storage.vue") },
       { path: "/flourstorage", component: () => import("../views/FlourStorage.vue") },
+      { path: "/powder", component: () => import("../views/Powder.vue") },
       { path: "/product", component: () => import("../views/Product.vue") },
       { path: "/spareparts", component: () => import("../views/SpareParts.vue") },
       { path: "/smeltingrecord", component: () => import("../views/SmeltingRecord.vue") },

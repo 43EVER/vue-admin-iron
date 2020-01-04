@@ -17,6 +17,7 @@
             <el-menu-item index="/stock">原料库存</el-menu-item>
             <el-menu-item index="/storage">入库管理</el-menu-item>
             <el-menu-item index="/flourstorage">粉库存</el-menu-item>
+            <el-menu-item index="/powder">粉入库</el-menu-item>
             <el-menu-item index="/product">产品库</el-menu-item>
             <el-menu-item index="/sales">销售库</el-menu-item>
             <el-menu-item index="/statistical">统计数据</el-menu-item>

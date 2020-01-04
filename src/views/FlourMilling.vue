@@ -17,12 +17,12 @@
             <el-row>
               <el-col :span="8">
                 <el-form-item label="制粉起始时间" label-width="110px">
-                  {{ (new Date(props.row.flourDetails.row1.col1)) | dateToTime }}
+                  {{ (new Date(Number(props.row.flourDetails.row1.col1))) | dateToTime }}
                 </el-form-item>
               </el-col>
               <el-col :span="7" :offset="1">
                 <el-form-item label="制粉终止时间" label-width="110px">
-                  {{ (new Date(props.row.flourDetails.row1.col2)) | dateToTime }}
+                  {{ (new Date(Number(props.row.flourDetails.row1.col2))) | dateToTime }}
                 </el-form-item>
               </el-col>
               <el-col :span="7" :offset="1">
@@ -134,7 +134,7 @@
         <el-row>
           <el-col :span="8">
             <el-form-item label-width="110px" label="料重">
-              <el-input v-model="editDialogData.feedWeight" disabled>
+              <el-input v-model="editDialogData.feedWeight">
                 <template slot="append">Kg</template>
               </el-input>
             </el-form-item>
@@ -220,7 +220,7 @@
         <el-row>
           <el-col :span="8">
             <el-form-item label="料重" label-width="110px">
-              <el-input v-model="editDialogData.feedWeight">
+              <el-input v-model="editDialogData.materialWeight">
                 <template slot="append">Kg</template>
               </el-input>
             </el-form-item>
@@ -295,7 +295,11 @@ export default {
           return false;
         });
       // data.forEach(item => {
-      //   // if (!(item.flourDetails instanceof Object)) item.flourDetails = JSON.parse(item.flourDetails);
+      //   item.flourDetails = JSON.parse(item.flourDetails);
+      //   item.flourDetails.timeRange = [
+      //     new Date(Number(item.flourDetails.row1.col1)),
+      //     new Date(Number(item.flourDetails.row1.col2))
+      //   ];
       // });
       return data;
     },
@@ -309,7 +313,7 @@ export default {
     },
     getYeild() {
       return (
-        (this.editDialogData.spittingWeight /
+        (this.editDialogData.materialWeight /
           this.editDialogData.feedWeight) *
         100
       );
@@ -344,12 +348,12 @@ export default {
       this.editDialogData.createTime = new Date(this.editDialogData.createTime);
       this.editDialogData.createTime = moment(this.editDialogData.createTime, "YYYY-M-D").toDate();
       this.editDialogData.feedWeight = Number(this.editDialogData.feedWeight);
-      this.editDialogData.spittingWeight = Number(this.editDialogData.spittingWeight);
+      this.editDialogData.materialWeight = Number(this.editDialogData.materialWeight);
       console.log(this.editDialogData.flourDetails);
-      this.editDialogData.flourDetails.row1.timeRange = [
-        new Date(this.editDialogData.flourDetails.row1.col1),
-        new Date(this.editDialogData.flourDetails.row1.col2)
-      ];
+      this.$set(this.editDialogData.flourDetails.row1, "timeRange", [
+        new Date(Number(this.editDialogData.flourDetails.row1.col1)),
+        new Date(Number(this.editDialogData.flourDetails.row1.col2))
+      ]);
 
       console.log(this.editDialogData);
     },
@@ -386,16 +390,14 @@ export default {
       // this.editDialogData.flourDetails = JSON.stringify(this.editDialogData.flourDetails);
 
       let data = JSON.parse(JSON.stringify(this.editDialogData));
-      data.flourDetails.row1.col1 = new Date(data.flourDetails.row1.timeRange[0]);
-      data.flourDetails.row1.col2 = new Date(data.flourDetails.row1.timeRange[1]);
+      data.flourDetails.row1.col1 = this.editDialogData.flourDetails.row1.timeRange[0].getTime();
+      data.flourDetails.row1.col2 = this.editDialogData.flourDetails.row1.timeRange[1].getTime();
       data.flourDetails.row1.col3 = this.hoursBetweenDates;
       delete data.flourDetails.row1.timeRange;
       data.materialWeight = data.feedWeight;
       data.yield = this.getYeild;
       data.createTime = moment(new Date(data.createTime)).format("YYYY-M-D");
       data.flourDetails = JSON.stringify(data.flourDetails);
-
-      console.log(data);
       await this.$store.dispatch({
         type: "updateFlourMillingData",
         data: data

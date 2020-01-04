@@ -2,7 +2,7 @@
   <div class="stock" v-loading="loading">
     <el-row>
       <el-col :span="4">
-        <el-button type="primary" @click="handleCreate">新增烧结记录</el-button>
+        <el-button type="primary" @click="handleCreate">新增压型记录</el-button>
       </el-col>
       <el-col :span="6">
         <el-input placeholder="请输入要搜索的编号" v-model="searchSerial">
@@ -14,7 +14,7 @@
       <el-table-column type="expand">
         <template slot-scope="scope">
           <el-form label-width="110px">
-            <el-form-item label="烧结工艺">
+            <el-form-item label="压型工艺">
               {{ scope.row.pressedInfor.name }}
             </el-form-item>
             <el-table :data="scope.row.pressedInfor.data" border>
@@ -74,7 +74,7 @@
         <el-form-item label="日期">
           <el-date-picker v-model="editDialogData.createTime"></el-date-picker>
         </el-form-item>
-        <el-form-item label="烧结工艺名称">
+        <el-form-item label="压型工艺名称">
           <el-input v-model="editDialogData.pressedInfor.name"></el-input>
         </el-form-item>
         <el-button type="primary" @click="editDialogData.pressedInfor.data.push({})">增加记录</el-button>

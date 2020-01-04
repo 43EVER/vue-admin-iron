@@ -13,7 +13,7 @@ export default {
     productData: (state, getters) => {
       let [...data] = state.rawProductData;
       data.forEach(item => {
-        item.amount2 = Number(item.amount) 
+        item.amount2 = Number(item.amount);
         getters.salesData.forEach(item2 => {
           if (item2.serial === item.serial) item.amount2 -= Number(item2.amount);
         });
